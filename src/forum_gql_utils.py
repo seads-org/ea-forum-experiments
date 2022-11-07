@@ -50,10 +50,11 @@ POST_QUERY = """
       }}
       user {{
         username
-        slug
+        _id
       }}
       coauthors {{
         username
+        _id
       }}
     }}
   }}
