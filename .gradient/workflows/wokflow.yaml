@@ -1,0 +1,25 @@
+'on':
+  github:
+    branches:
+      only: main
+jobs:
+  CloneRepo:
+    resources:
+      instance-type: C4
+    outputs:
+      repo:
+        type: volume
+    uses: git-checkout@v1
+    with:
+      url: context.event.github.url
+  Scrape:
+    resources:
+      instance-type: C4
+    needs:
+      - CloneRepo
+    inputs:
+      repo: CloneRepo.outputs.repo
+    uses: script@v1
+    with:
+      script: pip install -r /inputs/repo/requirements.txt && python /inputs/repo/scripts/data/scrape_ea_forum.py
+      image: paperspace/gradient-base:pt112-tf29-jax0314-py39-20220803

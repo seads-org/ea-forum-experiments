@@ -12,7 +12,6 @@ def read_post_data(path: str):
     data = pd.read_csv(path).set_index('_id')
     data['postedAt'] = pd.to_datetime(data['postedAt'])
     data['user'] = data.user.map(lambda x: json.loads(replace_single_quotes(x)) if not pd.isna(x) else None)
-
     data['userId'] = data.user.map(lambda x: x['_id'] if x is not None else '-')
     data['user'] = data.user.map(lambda x: x['username'] if x is not None else '-')
     data['tags'] = data['tags'].map(lambda x: json.loads(replace_single_quotes(x)))
