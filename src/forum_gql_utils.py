@@ -116,7 +116,9 @@ def scrape_forum(url:str, content:str, limit:int, step:int = 5000):
         try:
             objects.extend(res.json()['data'][content]['results'])
         except Exception as e:
-            print(e)
+            print(f"Status code: {res.status_code}")
+            print(f"Text: {res.text}\n")
+            print(f"Error: {e}")
             return res
 
     return objects
