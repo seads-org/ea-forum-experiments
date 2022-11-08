@@ -30,6 +30,7 @@ batch_size = int(getenv("SBERT_EMB_BATCH_SIZE", 384))
 # model_name = 'all-MiniLM-L12-v2:baseline'
 
 # %%
+os.makedirs(datap(), exist_ok=True)
 wandb.login() # relies on WANDB_API_KEY env var
 run = wandb.init(
     project="ea-forum-analysis", job_type="processing", dir=get_project_root(),
