@@ -1,6 +1,7 @@
-# import sys
-# sys.path.append("../../")
-print(os.getcwd())
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(sys.path[0])))
+print(sys.path)
 
 from dotenv import load_dotenv
 import wandb
