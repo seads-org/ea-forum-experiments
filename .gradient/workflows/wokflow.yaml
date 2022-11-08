@@ -21,5 +21,5 @@ jobs:
       repo: CloneRepo.outputs.repo
     uses: script@v1
     with:
-      script: pip install -r /inputs/repo/requirements.txt && python /inputs/repo/scripts/data/scrape_ea_forum.py
+      script: cd /inputs/repo/ && pip install -r requirements.txt && python scripts/data/scrape_ea_forum.py
       image: paperspace/gradient-base:pt112-tf29-jax0314-py39-20220803
