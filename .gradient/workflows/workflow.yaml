@@ -24,3 +24,23 @@ jobs:
       image: paperspace/gradient-base:pt112-tf29-jax0314-py39-20220803
     env:
       WANDB_API_KEY: secret:WANDB_API_KEY
+  TrainSBERT:
+    resources:
+      instance-type: A4000
+    needs:
+      - CloneRepo
+    inputs:
+      repo: CloneRepo.outputs.repo
+    uses: script@v1
+    with:
+      script: |-
+        cd /inputs/repo/
+        pip install -r requirements.txt
+        python scripts/train/train_sbert.py
+      image: paperspace/gradient-base:pt112-tf29-jax0314-py39-20220803
+    env:
+      WANDB_API_KEY: secret:WANDB_API_KEY
+      SBERT_MODEL: all-mpnet-base-v2
+      SBERT_BATCH_SIZE: 14
+      SBERT_N_EPOCHS: 1
+      SBERT_EVALUATION_STEPS: 1000
