@@ -8,7 +8,7 @@ jobs:
     uses: git-checkout@v1
     with:
       url: https://github.com/seads-org/ea-forum-experiments.git
-  TrainSBERT:
+  SBERTEmbedding:
     resources:
       instance-type: A4000
     needs:

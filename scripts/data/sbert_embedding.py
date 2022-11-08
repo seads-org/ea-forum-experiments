@@ -3,6 +3,9 @@ import pandas as pd
 from pandas import DataFrame
 from tqdm.auto import tqdm
 
+import nltk
+nltk.download('punkt')
+
 from datasets import Dataset
 from sentence_transformers import SentenceTransformer
 
