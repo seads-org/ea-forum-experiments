@@ -7,10 +7,10 @@ jobs:
         type: volume
     uses: git-checkout@v1
     with:
-      url: context.event.github.url
-  Scrape:
+      url: https://github.com/seads-org/ea-forum-experiments.git
+  TrainSBERT:
     resources:
-      instance-type: C4
+      instance-type: A4000
     needs:
       - CloneRepo
     inputs:
@@ -20,7 +20,11 @@ jobs:
       script: |-
         cd /inputs/repo/
         pip install -r requirements.txt
-        python scripts/data/scrape_ea_forum.py
+        python scripts/data/sbert_embedding.py
       image: paperspace/gradient-base:pt112-tf29-jax0314-py39-20220803
     env:
       WANDB_API_KEY: secret:WANDB_API_KEY
+      # SBERT_EMB_MODEL: "n8-all-mpnet-base-v2"
+      # SBERT_EMB_BATCH_SIZE: "384"
+      SBERT_EMB_MODEL: "all-MiniLM-L12-v2:baseline"
+      SBERT_EMB_BATCH_SIZE: "1024"
