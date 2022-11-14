@@ -1,197 +1,176 @@
-plotTagHeatmap = function (coocs, id) {
-    Highcharts.chart(id, {
+function getHistogramSpec(infoEntries, valueFunc, colorMap, {xTitle, title, binWidth, groupName='Segment'}) {
+    return {
         chart: {
-            type: 'heatmap',
-            height: '100%',
-            zoomType: 'xy'
+            zoomType: 'x'
         },
-        title: {
-            text: 'Correlation between tags',
-            align: 'left'
-        },
-
-        subtitle: {
-            text: 'Rows and columns correspond to tags, while color shows their correlation',
-            align: 'left'
-        },
+        title: { text: title },
         xAxis: {
-            gridLineWidth: 0,
-            categories: coocs.tags,
-            title: null
+            title: { text: xTitle}
         },
         yAxis: {
-            gridLineWidth: 0,
-            categories: coocs.tags,
-            title: null
+            title: { text: 'Number of users' }
         },
-        colorAxis: {
-            min: 0,
-            max: 1,
-            minColor: '#FFFFFF',
-            maxColor: Highcharts.getOptions().colors[0]
-        },
-        series: [{
-            data: coocs.freqs.ti1.map((d, i) => [d, coocs.freqs.ti2[i], coocs.freqs.cooc[i]]),
-        }],
-        tooltip: {
-            formatter() {
-                return `Tag 1: <b>${this.series.xAxis.categories[this.point.x]}</b><br>` +
-                       `Tag 2: <b>${this.series.yAxis.categories[this.point.y]}</b><br>` +
-                       `Correlation: <b>${Math.round(this.point.value * 1000) / 1000}</b>`;
+        plotOptions: {
+            histogram: {
+                binWidth: binWidth,
+                opacity: 0.75
             }
         },
-        credits: {enabled: false}
-    });
+        series: infoEntries.map(([n, vs]) => {
+            return {'id': n + '_base', 'data': valueFunc(vs), 'visible': false, 'showInLegend': false}}
+        ).concat(infoEntries.map(([n, vs]) => {
+            return {'name': n, 'baseSeries': n + '_base', 'color': colorMap.get(n), type: 'histogram'}}
+        )),
+        credits: { enabled: false },
+        tooltip: {
+            formatter() {
+                return `${xTitle}: <b>${Math.round(this.point.x * 100) / 100} - ${Math.round(this.point.x2 * 100) / 100}</b><br>` +
+                        `Number of users: <b>${this.y}</b>` + `<br>${groupName}: <b>${this.series.name}</b>`;
+            }
+        }
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    fetch('http://localhost:8000/tag_info.json').then(res => res.json()).then(data => {
-        const n_docs = data.n_docs;
-        const coocs = data.coocs;
-        plotTagHeatmap(coocs, 'tag-heatmap');
-        Highcharts.chart('n-docs-per-tag', {
-            plotOptions: {
-                histogram: {
-                    binsNumber: 200
-                }
-            },
+    fetch('data/user_info.json').then(res => res.json()).then(data => {
+        const segments = data.segments;
+        const colors = ['#a6cee3','#fdbf6f', '#33a02c', '#fb9a99', '#1f78b4','#e31a1c','#b2df8a'];
+        const colorMap = new Map(
+            colors.map((c, i) => [segments.segments[i], c])
+        );
+        Highcharts.chart('user-segments', {
             chart: {
-                zoomType: 'x'
+                zoomType: 'xy'
             },
-            title: {text: 'Number of documents per tag'},
+            title: { text: 'User segments' },
             xAxis: {
-                title: {text: 'Number of documents per tag'},
+                categories: segments.segments,
+                title: { text: 'Segments' }
             },
             yAxis: {
-                type: 'logarithmic',
-                title: {text: 'Number of tags'}
+                title: { text: 'Num. users' }
             },
-            legend:{ enabled:false },
-            credits: {enabled: false},
-            series: [
-                {
-                    type: 'histogram',
-                    baseSeries: 'hbase',
-                },
-                {
-                    data: n_docs,
-                    id: 'hbase',
-                    visible: false
-                }
-            ],
-            tooltip: {
-                formatter() {
-                    return `Number of documents: <b>${Math.ceil(this.point.x)} - ${Math.floor(this.point.x2)}</b><br>` +
-                            `Number of tags: <b>${this.y}</b>`;
-                }
-            }
-        })
-
-        const cum_fracs = data.cum_fracs;
-        // sum of a vectore
-        const total_n_docs = data.n_docs_total;
-        Highcharts.chart('frac-docs-per-tag', {
-            chart: {
-                zoomType: 'x'
-            },
-            title: {text: 'Number of tags per number of documents'},
-            xAxis: {
-                type: 'logarithmic',
-                title: {text: 'Number of documents per tag'}
-            },
-            yAxis: {
-                title: {text: 'Fraction of tags with less than this number of documents'},
-                max: 1
-            },
-            legend:{ enabled:false },
-            credits: {enabled: false},
+            legend: { enabled: false },
+            credits: { enabled: false },
             series: [{
-                // data: cum_fracs.fracs,
-                data: cum_fracs.fracs.map((d, i) => ({x: cum_fracs.n_docs[i], y: d})),
-            }],
-            tooltip: {
-                formatter() {
-                    return `Number of documents: <b>${Math.ceil(this.point.x)}</b><br>` +
-                            `Fraction of tags: <b>${Math.round(this.point.y * 1000) / 1000}</b><br>` +
-                            `Number of tags: <b>${Math.round(this.point.y * data.n_tags_total)}</b><br>` +
-                            `Fraction of documents: <b>${Math.round(this.point.x / total_n_docs * 10000) / 10000}</b>`;
-                }
-            }
-        })
-
-        const n_tags = data.n_tags;
-        Highcharts.chart('n-tags-per-doc', {
-            chart: {
                 type: 'column',
-                zoomType: 'x'
-            },
-            title: {text: 'Number of tags per document'},
-            xAxis: {
-                title: {text: 'Number of tags per document'},
-            },
-            yAxis: {
-                title: {text: 'Number of documents'}
-            },
-            legend:{ enabled:false },
-            credits: {enabled: false},
-            series: [{
-                data: n_tags.n_tags.map((n, i) => [n, n_tags.count[i]]),
+                data: segments.n_users
             }],
+            colors: colors,
             tooltip: {
-                formatter() {
-                    return `Number of tags: <b>${this.point.x}</b><br>` +
-                            `Number of documents: <b>${this.point.y}</b>`;
+                formatter: function() {
+                    return '<strong>' + this.x + '</strong>: ' + this.y + ' users';
                 }
-            }
-        })
-
-        const tags = data.tag_embedding;
-        Highcharts.chart('tag-scatter', {
-            title: {text: 'Tag embedding'},
-            xAxis: {
-                title: {text: 'Dimension 1'},
-                labels: {enabled: false},
-                tickLength: 0,
-                lineWidth: 1,
-                gridLineWidth: 1
-            },
-            yAxis: {
-                title: {text: 'Dimension 2'},
-                labels: {enabled: false},
-                tickLength: 0,
-                lineWidth: 1,
-                gridLineWidth: 1
-            },
-            chart: {
-                type: 'bubble',
-                height: '100%',
-                zoomType: 'xy',
             },
             plotOptions: {
-                bubble: {
-                    maxSize: '5%'
+                column: {
+                    colorByPoint: true
                 }
-            },
-            series: [{
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.tag}',
-                    style: {
-                        'fontSize': '7px'
-                    }
-                },
-                data: tags.map(d => {return {'x': d.x, 'y': d.y, 'z': Math.log(d.n_docs) + 1, 'tag': d.tag, 'n_docs': d.n_docs};})
-            }],
-            tooltip: {
-                formatter() {
-                    return `<b>${this.point.tag}</b> <br> Num. docs: <b>${this.point.n_docs}</b>`
-                }
-            },
-            credits: {enabled: false},
-            legend: {enabled: false}
+            }
         });
 
-        const coocs_filt = data.coocs_filt;
-        plotTagHeatmap(coocs_filt, 'tag-heatmap-filt');
+        const info = data.info;
+        const infoEntries = Object.entries(info);
+        const timeInfo = data.new_vs_old;
+        const timeInfoEntries = Object.entries(timeInfo);
+
+        Highcharts.chart('user-scatter', {
+            chart: {
+                type: 'bubble',
+                zoomType: 'xy'
+            },
+            title: { text: 'User statistics by segment' },
+            xAxis: {
+                type: 'logarithmic',
+                title: { text: 'Num. of posts' }
+            },
+            yAxis: {
+                type: 'logarithmic',
+                title: { text: 'Num. of comments' },
+                min: 1
+            },
+            series: infoEntries.map(d => {
+                const [name, values] = d;
+                return {
+                    'name': name,
+                    'data': values.n_posts.map((np,i) => ({'x': np, 'y': values.n_comments[i], 'z': Math.log(values.karma[i] + 1), 'i': i})),
+                    'color': colorMap.get(name)
+            }}),
+            plotOptions: {
+                bubble: {
+                    minSize: '0.01%',
+                    maxSize: '2%',
+                    jitter: {x: 0.01},
+                    events: {
+                        click: function(e) {
+                            const cInf = info[e.point.series.name];
+                            const i = e.point.i;
+                            document.getElementById('user-info').innerHTML = `
+                                <h3>User <a href=${cInf.pageUrl[i]}>${cInf.username[i]}</a></h3>
+                                <p>Num. of posts: ${cInf.n_posts[i]}</p>
+                                <p>Num. of comments: ${cInf.n_comments[i]}</p>
+                                <p>Karma: ${cInf.karma[i]}</p>
+                            `
+                        }
+                    }
+                }
+            },
+            tooltip: {
+                formatter: function() {
+                    const cInf = info[this.series.name]
+                    return '<strong>' + cInf.username[this.point.i] + '</strong>: ' +
+                        this.point.x + ' posts, ' + this.point.y + ' comments, ' + cInf.karma[this.point.i] + ' karma';
+                }
+            },
+            credits: { enabled: false }
+        })
+
+        Highcharts.chart(
+            'user-lifespan',
+            getHistogramSpec(
+                infoEntries, vs => vs.lifespan.map(d => d / 365), colorMap,
+                {xTitle: 'Num. years since registration', title: 'Time since registration', binWidth: 0.1}
+            )
+        );
+
+        Highcharts.chart(
+            'user-post-rate',
+            getHistogramSpec(
+                timeInfoEntries, vs => vs.n_posts_norm.map(d => Math.log10(d + 1)), colorMap,
+                {xTitle: 'Num. posts, normalized', title: 'Num. posts normalized by time', binWidth: 0.02, groupName: 'Account age'}
+            )
+        );
+
+        Highcharts.chart(
+            'user-comment-rate',
+            getHistogramSpec(
+                timeInfoEntries, vs => vs.n_comments_norm.map(d => Math.log10(d + 1)), colorMap,
+                {xTitle: 'Num. comments, normalized', title: 'Num. comments normalized by time', binWidth: 0.02, groupName: 'Account age'}
+            )
+        );
+
+        Highcharts.chart(
+            'user-karma',
+            getHistogramSpec(
+                infoEntries, vs => vs.karma.map(d => Math.log10(d + 1)), colorMap,
+                {xTitle: 'Log10( Karma )', title: 'Karma', binWidth: 0.1}
+            )
+        );
+
+        Highcharts.chart(
+            'post-score',
+            getHistogramSpec(
+                infoEntries, vs => vs.post_score_med.map(d => Math.log10(Math.max(d, 0) + 1)), colorMap,
+                {xTitle: 'Log10( median post score )', title: 'Post scores', binWidth: 0.1}
+            )
+        );
+
+        Highcharts.chart(
+            'comment-score',
+            getHistogramSpec(
+                infoEntries, vs => vs.comment_score_med.map(d => Math.log10(Math.max(d, 0) + 1)), colorMap,
+                {xTitle: 'Log10( median comment score )', title: 'Comment scores', binWidth: 0.05}
+            )
+        );
     });
 });

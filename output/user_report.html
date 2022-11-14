@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>User visualization</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/map.js"></script>
+    <script src="https://code.highcharts.com/modules/histogram-bellcurve.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+</head>
+<body>
+
+<script src="scripts/user_plots.js"></script>
+
+<section class="h-100 pb-5 pl-2">
+  <h2>User statistics</h2>
+  <div class="row">
+    <figure class="highcharts-figure col-md-4"><div id="user-segments"></div></figure>
+    <figure class="highcharts-figure col-md-4"><div id="user-scatter"></div></figure>
+    <div class="col-md-4" id="user-info"></div>
+  </div>
+
+  <div class="row">
+    <figure class="highcharts-figure col-lg-4 col-md-6"><div id="user-lifespan"></div></figure>
+    <figure class="highcharts-figure col-lg-4 col-md-6"><div id="user-post-rate"></div></figure>
+    <figure class="highcharts-figure col-lg-4 col-md-6"><div id="user-comment-rate"></div></figure>
+  </div>
+
+  <div class="row">
+    <figure class="highcharts-figure col-lg-4 col-md-6"><div id="user-karma"></div></figure>
+    <figure class="highcharts-figure col-lg-4 col-md-6"><div id="post-score"></div></figure>
+    <figure class="highcharts-figure col-lg-4 col-md-6"><div id="comment-score"></div></figure>
+  </div>
+</section>
+
+
+</body>
+</html>
