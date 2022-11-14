@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Tag visualization</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/map.js"></script>
+    <script src="https://code.highcharts.com/modules/histogram-bellcurve.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="blocks.css"/>
+  </head>
+  <body>
+    <script src="tag_plots.js"></script>
+    <section class="h-100 pb-5 pl-2">
+      <h2>Raw data visualization</h2>
+      <div class="container-fluid pl-6 pr-6">
+        <div class="row">
+          <figure class="highcharts-figure col-md-6"><div id="tag-heatmap"></div></figure>
+          <figure class="highcharts-figure col-md-6">
+            <div class="row">
+                <div id="n-tags-per-doc" class="col-md-6"></div>
+                <div id="n-docs-per-tag" class="col-md-6"></div>
+            </div>
+            <div class="row">
+                <div id="frac-docs-per-tag" class="w-100"></div>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="h-100 pb-5 pl-2">
+        <h2>Filter posts with few tags</h2>
+        <div class="container-fluid pl-6 pr-6 pt-3">
+            <div class="row">
+              <figure class="highcharts-figure col-md-6">
+                <div id="tag-heatmap-filt"></div>
+              </figure>
+              <figure class="highcharts-figure col-md-6">
+                <div id="tag-scatter"></div>
+              </figure>
+            </div>
+          </div>
+    </section>
+  </body>
+</html>
