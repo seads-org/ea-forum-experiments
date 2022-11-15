@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         'fontSize': '7px'
                     }
                 },
-                data: tags.map(d => {return {'x': d.x, 'y': d.y, 'z': Math.log(d.n_docs) + 1, 'tag': d.tag, 'n_docs': d.n_docs};})
+                data: tags.map(d => {return {'x': d.x, 'y': d.y, 'z': Math.log(d.n_docs), 'tag': d.tag, 'n_docs': d.n_docs};})
             }],
             tooltip: {
                 formatter() {

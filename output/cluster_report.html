@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Semantic cluster visualization</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/map.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+</head>
+<body>
+
+<script src="scripts/highcharts_options.js"></script>
+<script src="scripts/cluster_plots.js"></script>
+
+<section class="h-100 pb-5 pl-2">
+  <h2>Matching semantic clusters to tags</h2>
+  <div class="row">
+    <figure class="highcharts-figure col-md-4">
+        <div id="cluster-heatmap"></div>
+    </figure>
+    <figure class="highcharts-figure col-md-4">
+      <div id="cluster-user-heatmap"></div>
+    </figure>
+    <figure class="highcharts-figure col-md-4">
+        <div id="n-posts-per-cluster-bar"></div>
+        <div id="n-tags-per-cluster-bar"></div>
+    </figure>
+  </div>
+</section>
+
+
+</body>
+</html>
