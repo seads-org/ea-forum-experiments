@@ -1,3 +1,4 @@
+# %%
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(sys.path[0])))
@@ -60,7 +61,7 @@ print(f"Scraped {len(users)} users")
 user_df = DataFrame(users).set_index('_id')
 user_df['posts'] = user_df['posts'].map(lambda x: [v['_id'] for v in x])
 
-Dataset.from_pandas(post_df).save_to_disk(datap('users'))
+Dataset.from_pandas(user_df).save_to_disk(datap('users'))
 # user_df.to_csv('./data/users.csv')
 
 art = wandb.Artifact("users_raw", type="dataset")
@@ -95,4 +96,6 @@ art = wandb.Artifact("comments_raw", type="dataset")
 art.add_dir(datap('comments'))
 run.log_artifact(art)
 
+# %%
 run.finish()
+# %%

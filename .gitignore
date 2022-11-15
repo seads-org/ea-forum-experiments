@@ -3,7 +3,9 @@
 .ipynb_checkpoints
 .vscode
 __pycache__
+_pgbackup
 
+artifacts
 /data
 cache
 /models
