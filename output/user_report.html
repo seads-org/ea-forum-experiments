@@ -10,6 +10,7 @@
 </head>
 <body>
 
+<script src="scripts/highcharts_options.js"></script>
 <script src="scripts/user_plots.js"></script>
 
 <section class="h-100 pb-5 pl-2">
@@ -31,6 +32,23 @@
     <figure class="highcharts-figure col-lg-4 col-md-6"><div id="post-score"></div></figure>
     <figure class="highcharts-figure col-lg-4 col-md-6"><div id="comment-score"></div></figure>
   </div>
+
+  <hr>
+  <h2>Matching users to tags</h2>
+
+  <div class="row">
+    <figure class="highcharts-figure col-md-4"><div id="user-tag-heatmap"></div></figure>
+    <figure class="highcharts-figure col-md-4">
+      <div id="tag-embedding"></div>
+      <div id="cluster-size-bar"></div>
+    </figure>
+    <figure class="highcharts-figure col-md-4">
+      <div id="user-embedding"></div>
+      <div id="user-tag-info"></div>
+    </figure>
+  </div>
+
+
 </section>
 
 

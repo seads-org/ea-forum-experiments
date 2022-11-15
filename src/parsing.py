@@ -49,18 +49,29 @@ def estimate_comments_per_user(comments: DataFrame, user_list: list):
         map(lambda x: list(x) if not isinstance(x, float) else [])
 
 
-def estimate_relevant_posts_per_user(comments: DataFrame, users: DataFrame):
-    relevant_posts_per_user = comments.postId.groupby(comments.userId).apply(set)
-    relevant_posts_per_user = Series(
-        [list(set(s1)|set(s2)) for s1,s2 in zip(relevant_posts_per_user, users.posts[relevant_posts_per_user.index])],
-        relevant_posts_per_user.index
-    )
-    return relevant_posts_per_user
+def estimate_relevant_posts_per_user(comments: DataFrame, posts: DataFrame):
+    relevant_post_scores_per_user = pd.concat([
+        comments[['postId', 'baseScore', 'userId']],
+        posts[['baseScore', 'userId']].reset_index(names=['postId'])
+    ], ignore_index=True).groupby(['userId', 'postId']).sum().reset_index('postId')
+
+    return relevant_post_scores_per_user
 
 
-def estimate_tags_per_user(relevant_posts_per_user: Series, tags_per_post: Series, min_tags_per_user: int = 0, min_content_per_user: int = 0, min_users_per_tag: int = 0):
-    tags_per_user = relevant_posts_per_user.map(lambda ts: tags_per_post.reindex(ts).explode().value_counts())
-    tags_per_user = pd.concat(tags_per_user.values, axis=1).fillna(0).T.set_index(tags_per_user.index)
+def estimate_tag_scores_per_user(relevant_posts_per_user: Series, tags_per_post: Series, use_base_score:bool = True,
+                                 min_tags_per_user: int = 0, min_content_per_user: int = 0, min_users_per_tag: int = 0,
+                                 tag_filter: list = None):
+    relevant_posts_per_user = relevant_posts_per_user.copy()
+    relevant_posts_per_user['tag'] = tags_per_post[relevant_posts_per_user.postId].values
+
+    if not use_base_score:
+        relevant_posts_per_user['baseScore'] = 1
+
+    tags_per_user = relevant_posts_per_user.explode('tag')[['tag', 'baseScore']].\
+        groupby(['userId', 'tag']).sum().unstack().fillna(0).droplevel(axis=1, level=0)
+
+    if tag_filter is not None:
+        tags_per_user = tags_per_user[tag_filter]
 
     has_tag = (tags_per_user > 0)
     tags_per_user = tags_per_user.iloc[

@@ -173,4 +173,129 @@ document.addEventListener("DOMContentLoaded", function() {
             )
         );
     });
+
+    fetch('data/user_tag_matching.json').then(res => res.json()).then(data => {
+        const tag_heatmap = data.tag_heatmap;
+        Highcharts.chart('user-tag-heatmap', Highcharts.merge(heatmapOptions, {
+            chart: {
+                height: '900px',
+            },
+            title: {
+                text: 'Specificity of tags to clusters',
+                align: 'left'
+            },
+
+            subtitle: {
+                text: 'Rows correspond to tags, columns correspond to clusters, and color shows specificity of tags to clusters',
+                align: 'left'
+            },
+            xAxis: {
+                categories: tag_heatmap.clust_levels,
+            },
+            yAxis: {
+                categories: tag_heatmap.tag_levels,
+            },
+            series: [{
+                data: tag_heatmap.scores.tag.map((t,i) => [tag_heatmap.scores.cluster[i], t, tag_heatmap.scores.score[i]]),
+            }],
+            tooltip: {
+                formatter: function () {
+                    return `Cluster: <b>${this.series.xAxis.categories[this.point.x]}</b><br>` +
+                           `Tag: <b>${this.series.yAxis.categories[this.point.y]}</b><br>` +
+                           `Score: <b>${this.point.value}</b><br>`;
+                }
+            }
+        }))
+
+        const user_embedding = data.user_embedding;
+        const user_info = data.user_info;
+        const top_tags_per_clust = data.top_tags_per_clust;
+        Highcharts.chart('user-embedding', Highcharts.merge(embeddingOptions, {
+            chart: {
+                height: '100%'
+            },
+            title: { text: 'User embedding' },
+            plotOptions: {
+                scatter: {
+                    marker: {radius: 2.5},
+                    events: {
+                        click: function(e) {
+                            const i = e.point.i;
+                            document.getElementById('user-tag-info').innerHTML = `
+                                <h3>User <a href=${user_info.pageUrl[i]}>${user_info.username[i]}</a></h3>
+                                <p>Num. of posts: ${user_info.n_posts[i]}</p>
+                                <p>Num. of comments: ${user_info.n_comments[i]}</p>
+                                <p>Karma: ${user_info.karma[i]}</p>
+                            `
+                        }
+                    }
+                }
+            },
+            subtitle: { text: 'Each point represents a user, colors show clusters of users (as in the heatmap) and ' +
+                'distance between points represent similarities of user preferences. Only active users are used.' },
+            series: Object.entries(user_embedding).map(([n, vs]) => ({'name': n, 'data': vs.map(v => ({x: v[1], y: v[2], i: v[0]})), type: 'scatter'})),
+            tooltip: {
+                formatter() {
+                    return `Cluster: <b>${this.series.name}</b><br>` +
+                           `User: <b>${user_info.username[this.point.i]}</b><br>` +
+                           `Tags: <b>${top_tags_per_clust[this.series.name]}</b><br>`;
+                }
+            }
+        }))
+
+        const tag_embedding = data.tag_embedding;
+        const tag_info = data.tag_info;
+        Highcharts.chart('tag-embedding', Highcharts.merge(embeddingOptions, {
+            chart: {
+                height: '100%'
+            },
+            title: { text: 'Tag embedding' },
+            plotOptions: {
+                scatter: {
+                    marker: {radius: 2.5}
+                }
+            },
+            subtitle: { text: 'Each point represents a user, colors show clusters of users (as in the heatmap) and ' +
+                'distance between points represent similarities of user preferences. Only active users are used.' },
+            series: Object.entries(tag_embedding).map(([n, vs]) => ({
+                name: n, type: 'bubble',
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.tag}',
+                    style: {
+                        'fontSize': '7px'
+                    }
+                },
+                data: vs.map(v => ({x: v[1], y: v[2], z: Math.log(tag_info.n_posts[v[0]]), i: v[0], tag: tag_info.tag[v[0]]}))
+            })),
+            tooltip: {
+                formatter() {
+                    return `Tag: <b>${tag_info.tag[this.point.i]}</b><br>` +
+                           `Cluster: <b>${this.series.name >= 0 ? this.series.name : 'mixed'}</b><br>` +
+                           `Num. posts: <b>${tag_info.n_posts[this.point.i]}</b><br>`;
+                }
+            }
+        }))
+
+        const n_users_per_clust = data.n_users_per_clust;
+        Highcharts.chart('cluster-size-bar', Highcharts.merge(barOptions, {
+            colorAxis: {},
+            title: { text: 'Number of users per cluster' },
+            xAxis: {
+                categories: n_users_per_clust.map((_, i) => i),
+                title: { text: 'Cluster' }
+            },
+            yAxis: {
+                title: { text: 'Number of users' }
+            },
+            series: [{data: n_users_per_clust, type: 'column'}],
+            legend: { enabled: false },
+            tooltip: {
+                formatter() {
+                    return `Cluster: <b>${this.x}</b><br>` +
+                           `Num. users: <b>${this.y}</b><br>`;
+                }
+            }
+        }))
+    })
 });

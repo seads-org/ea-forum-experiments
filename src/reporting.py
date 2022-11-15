@@ -1,6 +1,7 @@
 from collections import defaultdict
-from typing import List
+from typing import List, Dict, Any
 from pandas import DataFrame, Series
+import pandas as pd
 import numpy as np
 
 
@@ -48,3 +49,14 @@ def extract_tag_heatmap_json(tag_coocs: DataFrame, cmap_order: List[int]) -> dic
         },
         'tags': list(tag_coocs.index[cmap_order])
     }
+
+
+def get_heatmap_json(df: DataFrame, col_names: List[str], min_val: float = 0.01) -> Dict[str, Any]:
+    js_df = df.stack().reset_index().rename(columns={'level_0': col_names[0], 'level_1': col_names[1], 0: col_names[2]})
+    js_df[col_names[0]], levels_row = pd.factorize(js_df[col_names[0]])
+    js_df[col_names[1]], levels_col = pd.factorize(js_df[col_names[1]])
+    js_df[col_names[2]] = np.round(js_df[col_names[2]], 3)
+
+    js_df = js_df[js_df[col_names[2]] > min_val] # must be below to preserve factorization
+
+    return js_df.to_dict('list'), list(levels_row), list(levels_col)
