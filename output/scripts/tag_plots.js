@@ -11,7 +11,7 @@ plotTagHeatmap = function (coocs, id) {
         },
 
         subtitle: {
-            text: 'Rows and columns correspond to tags, while color shows their correlation',
+            text: 'Rows and columns correspond to tags, while color shows their correlation. Only tags with >30 posts are shown.',
             align: 'left'
         },
         xAxis: {
@@ -148,6 +148,10 @@ document.addEventListener("DOMContentLoaded", function() {
         const tags = data.tag_embedding;
         Highcharts.chart('tag-scatter', {
             title: {text: 'Tag embedding'},
+            subtitle: {text:
+                "Tags (points) are embedded in 2D using UMAP. Distances between tags approximately correspond to '1 - correlation'. " +
+                "Point size is proportional to the number of documents with the tag."
+            },
             xAxis: {
                 title: {text: 'Dimension 1'},
                 labels: {enabled: false},

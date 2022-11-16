@@ -43,6 +43,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 zoomType: 'xy'
             },
             title: { text: 'User segments' },
+            subtitle: { text:
+                "Number of users in each segment. Segments were created manually based the number of comments/posts." +
+                "'low-activity' have at least one comment/post; 'active' have at least 4 posts or 6 comments; "
+            },
             xAxis: {
                 categories: segments.segments,
                 title: { text: 'Segments' }
@@ -137,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function() {
             'user-post-rate',
             getHistogramSpec(
                 timeInfoEntries, vs => vs.n_posts_norm.map(d => Math.log10(d + 1)), colorMap,
-                {xTitle: 'Num. posts, normalized', title: 'Num. posts normalized by time', binWidth: 0.02, groupName: 'Account age'}
+                {xTitle: 'Num. posts, normalized', title: 'Num. posts normalized by time since registration', binWidth: 0.02, groupName: 'Account age'}
             )
         );
 
@@ -145,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function() {
             'user-comment-rate',
             getHistogramSpec(
                 timeInfoEntries, vs => vs.n_comments_norm.map(d => Math.log10(d + 1)), colorMap,
-                {xTitle: 'Num. comments, normalized', title: 'Num. comments normalized by time', binWidth: 0.02, groupName: 'Account age'}
+                {xTitle: 'Num. comments, normalized', title: 'Num. comments normalized by time since registration', binWidth: 0.02, groupName: 'Account age'}
             )
         );
 
@@ -255,8 +259,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     marker: {radius: 2.5}
                 }
             },
-            subtitle: { text: 'Each point represents a user, colors show clusters of users (as in the heatmap) and ' +
-                'distance between points represent similarities of user preferences. Only active users are used.' },
+            subtitle: { text:
+                'Each point represents a tag, colors show clusters of users, which correspond to this group of tags' +
+                'distance between points represent similarities of user preferences. Only active users are used.' +
+                "Cluster '-1' corresponds to tags with no clear assignment to a user cluster."
+            },
             series: Object.entries(tag_embedding).map(([n, vs]) => ({
                 name: n, type: 'bubble',
                 dataLabels: {

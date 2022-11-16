@@ -8,28 +8,54 @@
   </head>
   <body>
     <h1 class="display-4 font-weight-bold mb-3 text-dark text-center">Analysis of EA Forum</h1>
-    <section class="font-weight-bold pt-5 pb-5 px-5 container">
+    <section class="pt-5 pb-5 px-5 container">
       <h2 class="font-weight-bold mb-3 text-dark">Reports</h2>
-      <ul>
-        <li class="pt-1"><a href="tag_report.html" target="_blank" rel="noopener noreferrer">Analysis of tags</a>
-        </li>
-        <li class="pt-1"><a href="user_report.html" target="_blank" rel="noopener noreferrer">Analysis of users</a>
-        </li>
-        <li class="pt-1"><a href="TODO" target="_blank" rel="noopener noreferrer">Interactive exploration of semantic clusters</a>
-        </li>
-        <li class="pt-1"><a href="cluster_report.html" target="_blank" rel="noopener noreferrer">Analysis of semantic clusters</a>
-        </li>
-      </ul>
+      <!-- <ul> -->
+        <h3>1. <a href="tag_report.html" target="_blank" rel="noopener noreferrer">Analysis of tags</a></h3>
+          <p>We analysed various statistics over the tags and showed their pairwise correlations.</p>
+          <div><strong>Results:</strong> 40% of tags have less than 10 posts, and most posts have no more than 3 tags. So, the signal is to weak to estimate proper correlations, but some tags can still be groupped.</div>
+          <div><strong>Suggestion:</strong> (i) automated tagging would help with missing tags, or (ii) building hierarchies of tags would help users to search posts over broader categories.</div>
+
+        <h3 class="pt-3">2. <a href="user_report.html" target="_blank" rel="noopener noreferrer">Analysis of users</a></h3>
+        <p>We analysed user posting and commenting patterns.</p>
+        <div>
+          <strong>Results:</strong>
+          <ul>
+            <li>Most users (18k) didn't write a single post nor comment</li>
+            <li>Recent users are currently more active on the forum than users registered >1 year ago</li>
+            <li>People who regularly post on the forum usually have higher rating per post than those who are not active</li>
+            <li>Analysing user writing patterns we can see some clear groups of tags corresponding to the user clusters</li>
+          </ul>
+        </div>
+        <div><strong>Suggestion:</strong> (i) automated tagging would help with missing tags, or (ii) building hierarchies of tags would help users to search posts over broader categories.</div>
+
+        <h3 class="pt-3">3. <a href="ea-forum-docvis" target="_blank" rel="noopener noreferrer">Interactive exploration of semantic clusters</a></h3>
+        <p>We groupped posts based on their semantic similarity and showed a two-level hierarchy of post topics.</p>
+        <div>
+          <strong>Results:</strong>
+          <ul>
+            <li>The post clusters provide unbiased visualization of the forum content purely based on post texts.</li>
+            <li>The hierarchies can be used as a way to organize the forum in unsupervise manner.</li>
+          </ul>
+        </div>
+
+        <h3 class="pt-3">4. <a href="cluster_report.html" target="_blank" rel="noopener noreferrer">Analysis of semantic clusters</a></h3>
+        <p>We matched semantic clusters defined on the previous step with the forum tags and analysed user behavior based on the defined clusters.</p>
+        <div>
+          <strong>Results:</strong> using semantic clusters provides clearer separation of the users and tags into categories
+        </div>
     </section>
+
     <section class="pb-5 px-5 container">
       <h2 class="font-weight-bold mb-3 text-dark">Suggestions</h2>
       <ul>
         <li class="pt-2">Auto-tagging, hierarchies of tags</li>
         <li class="pt-2">Analysing preferences based on visits, reads and votes</li>
-        <li class="pt-2">User-network analysis</li>
-        <li class="pt-2">Focusing on experts for better topic prioritization, suggest badges</li>
-        <li class="pt-2">Semantic search</li>
-        <li class="pt-2">Classification of orgs, projects, etc</li>
+        <li class="pt-2">User-network analysis: adding social component based on recommendations of interesting writers (twitter-style)</li>
+        <li class="pt-2">Extracting lists of experts per topic. That would allow to (i) reward active users,
+          (ii) label them to highlight that they can be trusted, (iii) possibly more precise rating that would only use scores from experts.</li>
+        <li class="pt-2">Semantic search over the forum.</li>
+        <li class="pt-2">Automated extraction of org announcements, project proposal, etc.</li>
         <li class="pt-2">Community health metrics</li>
       </ul>
     </section>
