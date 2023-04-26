@@ -1,5 +1,7 @@
 # EA Forum Experiments
 
+To prepare the environment, run `mamba env create -f ./environment.yml`
+
 ## Workflow
 
 1. The analysis starts with downloading data using `scripts/data/scrape_ea_forum.py`
