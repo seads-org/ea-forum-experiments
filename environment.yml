@@ -1,15 +1,35 @@
-name: null
-
+name: ea-forum-experiments
 channels:
   - defaults
   - conda-forge
-
 dependencies:
-  - python=3.9
-  - cudatoolkit=11.2
-  - cudnn=8.1.0
+  # - cudnn[version='>8.1.0']
+  - pip
   - pipreqsnb
-  - pip:
-    - ipywidgets
-    - ipykernel
-    - wandb
+  # - cudatoolkit[version='>11.2']
+  - python
+  - graphviz
+  - altair
+  - altair_saver
+  - scipy
+  - umap-learn
+  - leidenalg
+  - pymorphy2
+  - gensim
+  - python-dotenv
+  - nltk
+  - wandb
+  - requests
+  - igraph
+  - pygsp
+  - ipywidgets
+  - html2text
+  - ipykernel
+  - numpy
+  - pandas
+  - seaborn
+  - datasets
+  - tqdm
+  - matplotlib
+  # - fasttext
+  - transformers

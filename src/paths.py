@@ -43,3 +43,6 @@ def cachep(path:str=None):
 
 def outputp(path:str=None):
     return abs_path("output", path)
+
+def slidesp(path:str=None):
+    return abs_path("slides", path)

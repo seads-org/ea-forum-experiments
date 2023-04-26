@@ -12,3 +12,9 @@ cache
 wandb
 env
 .env
+/.conda
+/.mamba
+
+altair-data-*.json
+/slides/*.svg
+/slides/*.pdf
